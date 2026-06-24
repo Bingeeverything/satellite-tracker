@@ -1,3 +1,4 @@
-rawpy
+tifffile
 numpy
 pandas
+pyexiftool

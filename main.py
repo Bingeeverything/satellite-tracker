@@ -22,4 +22,8 @@ image =  tifffile.imread(dng_path)
 
 #doing an arithmetic mean of the np array, so its now a 2d greyscale array
 greyscale_image =  np.mean(image, axis= (2))
-print(greyscale_image)
+
+threshold = 100
+comparing = (greyscale_image > threshold)
+binary_image = comparing.astype(int)
+print(binary_image)

@@ -2,3 +2,4 @@ tifffile
 numpy
 pandas
 pyexiftool
+opencv

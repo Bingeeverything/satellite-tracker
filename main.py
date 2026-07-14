@@ -11,7 +11,7 @@ load_dotenv()
 
 #created a env file to store my exiftool file location
 exiftool_path = os.getenv("EXIFTOOL_PATH", "exiftool")
-dng_path = "images/20251015_034507.dng"
+dng_path = "images/20250420_223850.dng"
 
 with exiftool.ExifToolHelper(executable=exiftool_path) as et:
     for d in et.get_tags([dng_path], tags= ["SubSecDateTimeOriginal", "GPSAltitude", "GPSPosition"]): #using gps position because its a composite tag and works better in this case
@@ -34,9 +34,9 @@ print(scaled_image)
 
 #blurring the image, and then subtracting the blur from the original image to leave just the trails
 blurred = cv2.GaussianBlur(scaled_image, (151,151), 0)
-signal_float = cv2.subtract(scaled_image, blurred)
+signal = cv2.subtract(scaled_image, blurred)
 
-_, thresh_img = cv2.threshold(signal_float, 6, 255, cv2.THRESH_BINARY)
+_, thresh_img = cv2.threshold(signal, 6, 255, cv2.THRESH_BINARY)
 
 # total_cols = binary_image.shape[1]
 # start_index = total_cols//3

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<title>CelesTrak</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/web/bootstrap4/css/bootstrap.min.css">
+<script src="/web/jquery/jquery-3.7.1.min.js"></script>
+<script src="/web/popper/umd/popper.min.js"></script>
+<!-- <script src="https://unpkg.com/@popperjs/core@2"></script> -->
+<script src="/web/bootstrap4/js/bootstrap.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="/new-site.css">
+
+</head>
+
+<body>
+
+<!-- Formerly Celestial BBS and Celestial WWW -->
+<div class=container>
+
+<p class=center><img alt="CelesTrak" src="/images/CT-logo-lg-horz-1600x550REG.png" width=100%></p>
+
+<div class="alert alert-success"><b>CelesTrak is now a 
+<a target=IRS title="IRS Determination Letter (TIF format)" href="https://apps.irs.gov/pub/epostcard/dl/FinalLetter_86-3575285_CELESTRAK_10062021_00.tif">501(c)(3) non-profit</a>
+and we need your help.</b> CelesTrak's mission remains focused on making data
+and other resources freely available to the space community to facilitate
+understanding of our orbital environment and how to use it safely and
+responsibly. We are committed to enhancing our current visualization tools and
+upgrading SOCRATES to integrate with those tools. And we hope that many of you,
+who share our passion, will be willing to make a small monthly donation to help
+us achieve our vision. I look forward to continuing this journey together.
+We can't do it without you! <b>Even as little as $1/year helps!</b> <i>&#8209;&nbsp;T.S.&nbsp;Kelso</i>
+  <div style="display: flex; justify-content: center; margin-top: 1em;">
+    <a target=donate href="https://giving.gofundme.com/campaign/750670/donate/" title="Help us fund CelesTrak operations and future development!" alt="Please donate!"><img border=0 src="/images/donate.gif"></a>
+  </div>
+</div>
+
+<div class="alert alert-danger"><b>URGENT: We ran out of 5-digit catalog numbers with the addition of Saramago on 2026-07-11.
+  We had <a target=bluesky href="https://bsky.app/profile/tskelso.bsky.social/post/3mlg2dpuqds2n" title="Estimate as of 2026&#8209;05&#8209;09">estimated 
+  that to occur around 2026&#8209;07&#8209;12</a> back on 2026-05-09.
+  
+  The official USSF SATCAT is now at 100000.
+  
+  All newly cataloged objects will have 6-digit catalog numbers of 100000+ and GP data will not be available for them using the TLE format. 
+  <a href="/NORAD/documentation/gp-data-formats.php" title="A New Way to Obtain GP Data">CelesTrak developed new formats</a> that removed the 5-digit
+  catalog number limitation (and finally fixed the Y2K problem) in May 2020 and immediately began providing GP data in those formats for software developers.
+  Please be sure to adhere to our <a href="/usage-policy.php">usage policy</a> when retrieving any CelesTrak data.
+
+  The same limitations apply to the <a href="/satcat/satcat-format.php" title="SATCAT Format Documentation">legacy fixed-field SATCAT</a>.
+  That legacy format will continue to update but will only contain data for objects with catalog numbers below 70000.
+  Be sure to follow <a target=bluesky href="https://bsky.app/profile/tskelso.bsky.social">@TSKelso on Bluesky</a> for the latest updates, tutorials, 
+  and changes as we move forward. Spread the word!</b> <i>&#8209;&nbsp;TS</i>
+</div>
+
+<!-- <a target=cesium href="https://celestrak.digitalarsenal.io/cesium/index.html"> -->
+<!-- <a target=cesium href="/cesium/orbUI.php">
+<div class="jumbotron banner">
+	<h1>DigitalArsenal's OrbUI [Beta]</h1>
+	<br><h3>Perpetually propagate the full public catalog on the fly at up to 30 fps!</h3><br>
+	<h3><button type="button" class="btn btn-primary btn-sm">Launch OrbUI</button></h3>
+</div>
+</a> -->
+
+<p class=center><b><img width=25 alt="bluesky" src="/images/bluesky.png" border=0> Follow <a href="https://bsky.app/profile/tskelso.bsky.social">@TSKelso</a> and <a href="https://bsky.app/profile/celestrak.bsky.social">@CelesTrak</a> on Bluesky</b></p>
+
+<table class="outline center" width=90% style="max-width: 700px;"><tr><td>
+<table width=100%>
+  <tr class=header><th colspan=3>NORAD GP Element Sets</th></tr>
+  <tr>
+    <td align=center width=33%><a href="/NORAD/elements/">Current Data (GP)</a></td>  
+    <td align=center width=34%>&nbsp;</td>  
+    <td align=center width=33%><a href="/NORAD/elements/supplemental/">Supplemental Data (SupGP)</a></td>
+  </tr>
+</table>
+<table width=100%>
+  <tr class=shade>
+    <td align=center width=33%><a href="/NORAD/archives/request.php">Special Data<br>Request (GP)</a></td>
+    <td align=center width=34%><a href="/NORAD/documentation/">Documentation</a><br>
+        <a href="/usage-policy.php"><b>CelesTrak Usage Policy</b></a></td>
+    <td align=center width=33%><a href="/NORAD/archives/sup-request.php">Special Data<br>Request (SupGP)</a></td>
+  </tr>
+</table>
+
+<table width=100%>
+  <tr class=header><th>Library</th></tr>
+</table>
+
+<table width=100%>
+  <tr><td align=center><a href="/publications/">Publications</a></td></tr>
+  <tr class=shade><td align=center><a href="/software/">Software Repository</a></td></tr>
+  <tr><td align=center><a href="/columns/"><i>Computers & Satellites</i> Columns</a></td></tr>
+  <tr class=shade><td align=center><a href="/software/tutorials/"><b>NEW: Orbital Mechanics Software Tutorials</b></a></td></tr>
+  <!--<tr class=shade><td align=center><a href="/columns/v04n03/">"Frequently Asked Questions: Two-Line Element Set Format"</a></td></tr>
+  <tr><td align=center><a href="/columns/v04n05/">"More Frequently Asked Questions"</a></td></tr>-->
+  <tr><td align=center><a href="/NORAD/documentation/gp-data-formats.php"><b>"A New Way to Obtain GP Data (aka TLEs)"</b></a></td></tr>
+  <tr class=shade><td align=center><a href="/NORAD/documentation/sup-gp-queries.php"><b>"How to Perform SupGP Queries"</b></a></td></tr>
+</table>
+
+<table width=100%>
+  <tr class=header><th>Special Event Coverage</th></tr>
+  <tr><td align=center><a href="/events/Artemis-I/"><b><i>Artemis I & II Missions</i></b></a></td></tr>
+  <tr class=shade><td align=center><a href="/events/48275-reentry/"><i>Long March-5B Rocket Body (48275) Reentry of 2021 May 9</i></a></td></tr>
+  <tr><td align=center><a href="/events/ors-3.php"><i>ORS-3 Launch of 2013 Nov 20</i></a></td></tr>
+  <tr class=shade><td align=center><a href="/events/dnepr.php"><i>Dnepr Launch of 2013 Nov 21</i></a></td></tr>
+  <tr><td align=center><a href="/events/38746-Breakup/"><i>Breeze-M Rocket Body (38746) Breakup</i></a></td></tr>
+  <tr class=shade><td align=center><a href="/events/collision/"><i>Iridium 33/Cosmos 2251 Collision</i></a></td></tr>
+  <tr><td align=center><a href="/events/usa-193.php"><i>USA 193 Post-Shootdown Analysis</i></a></td></tr>
+  <tr class=shade><td align=center><a href="/events/asat.php"><i>Chinese ASAT Test</i></a></td></tr>
+  <tr><td align=center><a href="/events/debris-events.php"><i>2007 Debris Events</i></a></td></tr>
+</table>
+
+<table width=100%>
+  <tr class=header><th colspan=3>Online Satellite Catalog (SATCAT)</th></tr>
+  <tr>
+    <td align=center width=33%><a href="/satcat/"><b>SATCAT</b></a></td>
+    <td align=center width=34%><a href="/satcat/boxscore.php">SATCAT Boxscore</a></td>
+    <td align=center width=33%><a href="/satcat/launch-boxscore.php">Launch Boxscore</a></td>
+  </tr>
+</table>
+
+<table width=100%>
+  <tr class=header><th>SOCRATES Plus</th></tr>
+  <tr><th class=noshade><a href="/SOCRATES/">Satellite Orbital Conjunction Reports<BR>Assessing threatening Encounters in Space</a></th></tr>
+</table>
+
+<table width=100%>
+  <tr class=header><th colspan=2><a href="/GPS/">GPS Data</a></th></tr>
+  <tr>
+    <td align=center width=50%><a href="/GPS/status/">Status Messages</a></td>
+    <td align=center width=50%><a href="/GPS/NANU/">NANUs</a></td>
+  </tr>
+  <tr class=shade>
+    <td align=center width=50%><a href="/GPS/almanac/SEM/">SEM Almanacs</a></td>
+    <td align=center width=50%><a href="/GPS/almanac/Yuma/">Yuma Almanacs</a></td>
+  </tr>
+</table>
+
+<table width=100%>
+  <tr class=header><th colspan=2>Space Data</th></tr>
+  <tr>
+    <td align=center width=50%><a href="/SpaceData/">Earth Orientation Parameters</a></td>
+    <td align=center width=50%><a href="/SpaceData/">Space Weather</a></td>
+  </tr>
+</table>
+
+<table width=100%>
+  <tr class=header><th><a href="/brief-history.php">CelesTrak: A Brief History</a></th></tr>
+  <tr class=shade><th><a href="/webmaster.php">About the Webmaster</a></th></tr>
+</table>
+</td></tr></table>
+
+<br>
+<footer class="footer lightBG">
+	<div class="d-flex justify-content-between align-items-center">
+		<span class=NOmobile>
+		<img src="/images/CT-icon-256-t.png" alt="CelesTrak" height=100 style="padding-left: 25px; padding-right: 50px;">
+		</span>
+  	<span class="center mediumSize" style="padding-top: 10px; padding-bottom: 10px; font-style: italic; margin: auto;">
+    	<a href="/webmaster.php" title="About the Webmaster">Dr. T.S. Kelso</a>
+    	<a href="mailto:TS.Kelso@celestrak.org">[TS.Kelso@celestrak.org]</a><br>
+    	Follow <a href="https://bsky.app/profile/tskelso.bsky.social">@TSKelso</a> on Bluesky<br>
+  		  Last updated: 2026 Jun 29 05:13:31 UTC<br>
+  Accessed 29,137,894 times<br>
+  Current system time: 2026 Jul 14 06:18:23 UTC<br>
+  		<a tabindex="0" title="CelesTrak's Simple Privacy Policy" data-toggle="popover" data-trigger="focus"
+  		data-placement="top" data-content="We do not use cookies on CelesTrak and
+  		we do not collect any personal information, other than IP addresses, which
+  		are used to detect and block malicious activity and to assess system
+  		performance. We do not use IP addresses for tracking or any other
+  		purposes. No personal data is shared with third parties."><span style="color:blue">CelesTrak's
+  		Simple Privacy Policy</span></a>
+  	</span>
+		<span class=NOmobile>
+		<img src="/images/CT-icon-256-t.png" alt="CelesTrak" height=100 style="padding-left: 50px; padding-right: 25px;">
+		</span>
+	</div>
+</footer>
+
+<script>
+$(document).ready(function(){
+    $('[data-toggle="popover"]').popover();   
+});
+$('.popover-dismiss').popover({
+  trigger: 'focus'
+});
+</script>
+</div>
+
+</body>
+
+</html>

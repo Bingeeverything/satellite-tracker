@@ -2,3 +2,5 @@
 images/
 .vscode/
 .env
+phases/
+!phases/time_earth_satellites.py

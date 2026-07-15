@@ -3,4 +3,5 @@ numpy
 pandas
 pyexiftool
 opencv
+pytz
 "skyfield.api"

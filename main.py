@@ -5,6 +5,7 @@ import tifffile
 from dotenv import load_dotenv
 import os
 import cv2
+from phases import satellite_locator
 
 #Load variables from the .env file
 load_dotenv()
@@ -13,10 +14,20 @@ load_dotenv()
 exiftool_path = os.getenv("EXIFTOOL_PATH", "exiftool")
 dng_path = "images/20250420_223850.dng"
 
+# Master dictionary to hold data for all files
+all_image_data = {}
+file_paths = [dng_path]
+
 with exiftool.ExifToolHelper(executable=exiftool_path) as et:
-    for d in et.get_tags([dng_path], tags= ["SubSecDateTimeOriginal", "GPSAltitude", "GPSPosition"]): #using gps position because its a composite tag and works better in this case
-        for k, v in d.items():
-            print(f"Dict: {k} = {v}")
+    for d in et.get_tags(file_paths, tags=["SubSecDateTimeOriginal", "GPSAltitude", "GPSPosition"]):
+        current_file = d.get("SourceFile")
+        
+        # Clean the prefixes for this specific file's tags
+        clean_data = {k.split(":")[-1]: v for k, v in d.items() if k != "SourceFile"}
+        
+        all_image_data[current_file] = clean_data
+
+print(all_image_data[dng_path]["GPSPosition"])
 
 #using tifffile to read the image, and then we open the image and get the mean
 image =  tifffile.imread(dng_path)
@@ -59,7 +70,29 @@ if lines is not None:
 else:
     print("Warning: No lines met the length requirement. The sky mask remains clear.")
 
-print(coordinates)
 # Save result as a clean black-and-white binary image
 cv2.imwrite("Result Image.jpg", thresh_img)
 cv2.waitKey(0)
+
+# Save result as a clean black-and-white binary image
+cv2.imwrite("Result Image.jpg", thresh_img)
+cv2.waitKey(0)
+
+# Check if the DNG data exists in your master dictionary
+if dng_path in all_image_data:
+    # Safely pull the keys from your existing dictionary structure
+    SubSecDateTimeOriginal = all_image_data[dng_path].get("SubSecDateTimeOriginal")
+    GPSPosition = all_image_data[dng_path].get("GPSPosition")
+
+    # Verify both values were successfully extracted before processing
+    if GPSPosition and SubSecDateTimeOriginal:
+        # ExifTool separates Composite:GPSPosition using a comma and space
+        lat, lon = GPSPosition.split(" ")
+        lat = float(lat)
+        lon = float(lon)
+        # Execute your satellite timing function
+        satellite_locator(SubSecDateTimeOriginal, lat, lon)
+    else:
+        print("Error: Missing required GPSPosition or SubSecDateTimeOriginal tags.")
+else:
+    print(f"Error: No metadata found for {dng_path}")

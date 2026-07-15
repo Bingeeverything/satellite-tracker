@@ -2,5 +2,6 @@
 images/
 .vscode/
 .env
-phases/
+phases/*
 !phases/time_earth_satellites.py
+stations.json

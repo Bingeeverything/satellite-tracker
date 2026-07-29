@@ -12,11 +12,16 @@ load_dotenv()
 
 #created a env file to store my exiftool file location
 exiftool_path = os.getenv("EXIFTOOL_PATH", "exiftool")
-dng_path = "images/20250420_223850.dng"
+dng_path = "images/20260717_223359.dng"
 
 # Master dictionary to hold data for all files
 all_image_data = {}
 file_paths = [dng_path]
+
+with exiftool.ExifToolHelper(executable=exiftool_path) as et:
+    for d in et.get_metadata(dng_path):
+        for k, v in d.items():
+            print(f"Dict: {k} = {v}")
 
 with exiftool.ExifToolHelper(executable=exiftool_path) as et:
     for d in et.get_tags(file_paths, tags=["SubSecDateTimeOriginal", "GPSAltitude", "GPSPosition"]):
@@ -24,10 +29,39 @@ with exiftool.ExifToolHelper(executable=exiftool_path) as et:
         
         # Clean the prefixes for this specific file's tags
         clean_data = {k.split(":")[-1]: v for k, v in d.items() if k != "SourceFile"}
-        
         all_image_data[current_file] = clean_data
 
-print(all_image_data[dng_path]["GPSPosition"])
+
+###checking if the GPS Position exists in the data
+image_data = all_image_data.get(dng_path, {})
+has_gps = "GPSAltitude" in image_data and "GPSPosition" in image_data
+
+if has_gps:
+    print(f"GPS data found for {dng_path}")
+else:
+    print(f"Missing GPS data for {dng_path}!")
+    # Prompt user for manual input
+    try:
+        user_gps = input("Enter Latitude Longitude (e.g., -37.8488 43.6432): ")
+        user_alt = input("Enter Altitude in metres (e.g., 50): ")
+    except ValueError:
+        print("Invalid numerical input. Aborting.")
+        exit(1)
+
+# Write the new coordinates to the DNG file
+print(f"Writing GPS data to {dng_path}...")
+with exiftool.ExifToolHelper(executable=exiftool_path) as et:
+    et.set_tags(
+        [dng_path],
+        tags={
+            "GPSPosition": user_gps,
+            "GPSAltitude": user_alt,
+        },
+        params=["-overwrite_original"]
+    )
+
+all_image_data[dng_path]["GPSPosition"] = user_gps
+all_image_data[dng_path]["GPSAltitude"] = user_alt
 
 #using tifffile to read the image, and then we open the image and get the mean
 image =  tifffile.imread(dng_path)

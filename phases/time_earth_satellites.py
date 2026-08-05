@@ -24,17 +24,15 @@ def satellite_locator(SubSecDateTimeOriginal, lat, lon):
     max_days = 7.0  
     name = 'stations.json' 
 
-    # FIXED: Correct base and concatenated url string
-    base = 'https://celestrak.org/NORAD/elements/gp.php'
-    url = base + '?GROUP=active&FORMAT=json'
+    name = 'historical_active.json' 
 
-    if not load.exists(name) or load.days_old(name) >= max_days:
-        # NOTE: Skyfield's built-in download handles the fixed URL directly
-        load.download(url, filename=name)
-
-    #Parsing the Data
-    with load.open(name) as f:
+    # Bypass the URL download entirely and open the local historical file
+    with open(name, 'r') as f:
         data = json.load(f)
+
+    # Create EarthSatellite objects
+    sats = [EarthSatellite.from_omm(ts, fields) for fields in data]
+    print('Loaded', len(sats), 'historical satellites')
 
     # load_dotenv()
     # password = os.getenv("PASSWORD", "password")
@@ -49,17 +47,10 @@ def satellite_locator(SubSecDateTimeOriginal, lat, lon):
     # This queries the 'tle' class which provides historical data
     # raw_tle_data = st.gp_history(epoch=date_range, format='tle', limit=500)
     # lines = data.strip().split('\n')
-
-    #Create EarthSatellite objects
-    sats = []
-    for d in data:
-        sat = EarthSatellite.from_omm(ts, d)
-        sat.name = d["OBJECT_NAME"]
-        sats.append(sat)
-            
-    print('Loaded', len(sats), 'satellites')    
+   
     me = melbourne.at(t)
 
     visible_satellites = []
+    return visible_satellites
 
  

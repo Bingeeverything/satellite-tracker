@@ -12,7 +12,7 @@ load_dotenv()
 
 #created a env file to store my exiftool file location
 exiftool_path = os.getenv("EXIFTOOL_PATH", "exiftool")
-dng_path = "images/20260717_223359.dng"
+dng_path = "images/20250420_223850.dng"
 
 # Master dictionary to hold data for all files
 all_image_data = {}
@@ -36,7 +36,12 @@ with exiftool.ExifToolHelper(executable=exiftool_path) as et:
 image_data = all_image_data.get(dng_path, {})
 has_gps = "GPSAltitude" in image_data and "GPSPosition" in image_data
 
+print(all_image_data)
+print(image_data)
+
 if has_gps:
+    user_gps = image_data.get("GPSPosition")
+    user_alt = image_data.get("GPSAltitude")
     print(f"GPS data found for {dng_path}")
 else:
     print(f"Missing GPS data for {dng_path}!")
@@ -62,6 +67,8 @@ with exiftool.ExifToolHelper(executable=exiftool_path) as et:
 
 all_image_data[dng_path]["GPSPosition"] = user_gps
 all_image_data[dng_path]["GPSAltitude"] = user_alt
+print(user_gps)
+print(user_alt)
 
 #using tifffile to read the image, and then we open the image and get the mean
 image =  tifffile.imread(dng_path)

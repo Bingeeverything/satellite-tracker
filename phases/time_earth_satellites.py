@@ -21,9 +21,6 @@ def satellite_locator(SubSecDateTimeOriginal, lat, lon):
     tz = pytz.timezone('Australia/Melbourne')
     print("Observer Location:", melbourne)
 
-    max_days = 7.0  
-    name = 'stations.json' 
-
     name = 'historical_active.json' 
 
     # Bypass the URL download entirely and open the local historical file

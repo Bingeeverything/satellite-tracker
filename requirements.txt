@@ -5,3 +5,4 @@ pyexiftool
 opencv
 pytz
 "skyfield.api"
+spacetrack

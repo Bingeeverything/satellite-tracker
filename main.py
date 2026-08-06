@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import os
 import cv2
 from phases import satellite_locator
+from datetime import datetime, timedelta
 
 #Load variables from the .env file
 load_dotenv()
@@ -31,11 +32,20 @@ with exiftool.ExifToolHelper(executable=exiftool_path) as et:
         clean_data = {k.split(":")[-1]: v for k, v in d.items() if k != "SourceFile"}
         all_image_data[current_file] = clean_data
 
-
 ###checking if the GPS Position exists in the data
 image_data = all_image_data.get(dng_path, {})
 has_gps = "GPSAltitude" in image_data and "GPSPosition" in image_data
 
+#calculating the time frame for the image when it was clicked    
+timerange = image_data.get("SubSecDateTimeOriginal")
+timerange = timerange.split(" ")[0]
+base_date = datetime.strptime(timerange, "%Y:%m:%d")
+date_before = base_date - timedelta(days = 1)
+date_before = date_before.strftime("%Y-%m-%d")
+date_after = base_date + timedelta(days = 1)
+date_after = date_after.strftime("%Y-%m-%d")
+epoch_range = f"{date_before}--{date_after}"
+print(epoch_range)
 print(all_image_data)
 print(image_data)
 
@@ -137,3 +147,5 @@ if dng_path in all_image_data:
         print("Error: Missing required GPSPosition or SubSecDateTimeOriginal tags.")
 else:
     print(f"Error: No metadata found for {dng_path}")
+
+print(coordinates[:5])

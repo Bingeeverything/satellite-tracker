@@ -29,25 +29,12 @@ def satellite_locator(SubSecDateTimeOriginal, lat, lon):
 
     # Create EarthSatellite objects
     sats = [EarthSatellite.from_omm(ts, fields) for fields in data]
+    satellites_dict = {}
+    for sat in sats:
+        satellites_dict[sat.model.satnum] = sat
     print('Loaded', len(sats), 'historical satellites')
 
-    # load_dotenv()
-    # password = os.getenv("PASSWORD", "password")
-
-    # st = SpaceTrackClient(identity='_______@gmail.com', password= password)
-
-    # target_date = dt.strftime('%Y-%m-%d')
-    # date_range = f"{target_date}-->{target_date} 23:59:59"
-    # print(f"Querying Space-Track for historical TLEs on: {target_date}")
-
-    # 4. Fetch the data
-    # This queries the 'tle' class which provides historical data
-    # raw_tle_data = st.gp_history(epoch=date_range, format='tle', limit=500)
-    # lines = data.strip().split('\n')
-   
     me = melbourne.at(t)
-
-    visible_satellites = []
-    return visible_satellites
+    return satellites_dict
 
  

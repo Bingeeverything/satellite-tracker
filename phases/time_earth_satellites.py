@@ -4,7 +4,6 @@ import pytz
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from spacetrack import SpaceTrackClient
-from dotenv import load_dotenv
 import os
 
 def satellite_locator(SubSecDateTimeOriginal, lat, lon):

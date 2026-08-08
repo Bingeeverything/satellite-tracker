@@ -2,7 +2,8 @@ tifffile
 numpy
 pandas
 pyexiftool
-opencv
+opencv-python
 pytz
-"skyfield.api"
+skyfield
 spacetrack
+astroquery #a third party wrapper for astronomy net

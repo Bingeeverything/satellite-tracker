@@ -32,6 +32,7 @@ def satellite_locator(SubSecDateTimeOriginal, lat, lon):
     satellites_dict = {}
     for sat in sats:
         satellites_dict[sat.model.satnum] = sat
+    sats = list(satellites_dict.values())
     print('Loaded', len(sats), 'historical satellites')
 
     me = melbourne.at(t)

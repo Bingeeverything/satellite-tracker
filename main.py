@@ -5,9 +5,8 @@ import tifffile
 from dotenv import load_dotenv
 import os
 import cv2
-from phases import satellite_locator
+from phases import satellite_locator, download_historical_data, get_camera_pointing, convert_dng_to_jpg
 from datetime import datetime, timedelta
-from phases import download_historical_data
 
 #Load variables from the .env file
 load_dotenv()
@@ -26,7 +25,7 @@ with exiftool.ExifToolHelper(executable=exiftool_path) as et:
             print(f"Dict: {k} = {v}")
 
 with exiftool.ExifToolHelper(executable=exiftool_path) as et:
-    for d in et.get_tags(file_paths, tags=["SubSecDateTimeOriginal", "GPSAltitude", "GPSPosition"]):
+    for d in et.get_tags(file_paths, tags=["SubSecDateTimeOriginal", "GPSAltitude", "GPSPosition", "PreviewImageStart", "PreviewImageLength"]):
         current_file = d.get("SourceFile")
         
         # Clean the prefixes for this specific file's tags
@@ -137,6 +136,19 @@ if __name__ == "__main__":
     # Save result as a clean black-and-white binary image
     cv2.imwrite("Result Image.jpg", thresh_img)
     cv2.waitKey(0)
+
+    filename = os.path.basename(dng_path)
+    file_base = os.path.splitext(filename)[0]
+    output_jpg_path = os.path.join("images", f"{file_base}.jpg")
+    start_offset = all_image_data[dng_path].get("PreviewImageStart")
+    length_bytes = all_image_data[dng_path].get("PreviewImageLength")
+    if start_offset and length_bytes:
+        png_image = convert_dng_to_jpg(dng_path, output_jpg_path, start_offset, length_bytes)
+    else:
+        print(f"Error: Embedded preview data missing from Exif tags for {dng_path}")
+
+
+    header = get_camera_pointing(png_image)
 
     # Check if the DNG data exists in your master dictionary
     if dng_path in all_image_data:

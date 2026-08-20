@@ -5,6 +5,7 @@ images/
 phases/*
 !phases/time_earth_satellites.py
 !phases/download_history.py
+!phases/stars_match.py
 historical_active.json
 Result Image.jpg
 __pycache__

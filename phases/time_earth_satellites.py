@@ -2,9 +2,6 @@ from skyfield.api import EarthSatellite, load, wgs84
 import json
 import pytz
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
-from spacetrack import SpaceTrackClient
-import os
 
 def satellite_locator(SubSecDateTimeOriginal, lat, lon):
     #Time Setup

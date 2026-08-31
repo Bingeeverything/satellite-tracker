@@ -3,10 +3,12 @@ from astroquery.exceptions import TimeoutError as AstroTimeoutError
 from dotenv import load_dotenv
 from astropy.io import fits
 import numpy as np
+from astropy.stats import sigma_clipped_stats
+from astroquery.astrometry_net import AstrometryNet
+from photutils.detection import DAOStarFinder
 import os
 import tifffile
-from PIL import Image
-import io
+from PIL import ImageChops
 import requests
 import time
 
@@ -25,16 +27,45 @@ def get_camera_pointing(image):
         load_dotenv()
         ast.api_key = os.getenv("ASTRONOMY_NET_API")    
 
+        fits_file = image
+        with fits.open(fits_file) as hdul:
+            data = hdul[0].data
+            header = hdul[0].header
+            print(data.shape)
+            data = np.mean(data, axis = 0)
+            height, width = data.shape
+
+
+        #get the stars
+        mean, median, std = sigma_clipped_stats(data, sigma = 3.6)
+        daofind = DAOStarFinder(fwhm=3.0, threshold= 5.0 * std)
+        sources = daofind( data - median)
+
+        #format and sort the stars
+        sources.sort("flux", reverse=True)
+        top_sources = sources[:100]
+        x_positions = top_sources["x_centroid"]
+        y_positions = top_sources["y_centroid"]
+        x = list(x_positions)
+        y = list(y_positions)
+
         submission_id = None
         max_network_retries = 3
-        retry_delay = 5
+        retry_delay = 10
 
         for attempt in range(max_network_retries):
             try:
                 print(f"Uploading image to Astrometry.net (Attempt {attempt + 1})...")
-                wcs_header = ast.solve_from_image(
-                    image,
-                    solve_timeout = 5
+                wcs_header = ast.solve_from_source_list(
+                x=x,
+                y=y,
+                image_width=width,
+                image_height=height,
+                solve_timeout=5,
+                scale_units = 'degwidth',
+                scale_type = 'ev',
+                scale_est = 76.1,
+                scale_err = 20
                 )
                 return wcs_header
 
@@ -54,7 +85,7 @@ def get_camera_pointing(image):
                     return None
                 
         if submission_id:
-            monitor_retries = 5
+            monitor_retries = 30
             print(f"Monitoring submission ID: {submission_id}")
             
             for m_attempt in range(monitor_retries):

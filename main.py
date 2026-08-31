@@ -5,7 +5,7 @@ import tifffile
 from dotenv import load_dotenv
 import os
 import cv2
-from phases import satellite_locator, download_historical_data, get_camera_pointing, convert_dng_to_jpg
+from phases import satellite_locator, download_historical_data, get_camera_pointing, convert_dng_to_fits
 from datetime import datetime, timedelta
 
 #Load variables from the .env file
@@ -143,7 +143,7 @@ if __name__ == "__main__":
     start_offset = all_image_data[dng_path].get("PreviewImageStart")
     length_bytes = all_image_data[dng_path].get("PreviewImageLength")
     if start_offset and length_bytes:
-        png_image = convert_dng_to_jpg(dng_path, output_jpg_path, start_offset, length_bytes)
+        png_image = convert_dng_to_fits(dng_path, output_jpg_path)
     else:
         print(f"Error: Embedded preview data missing from Exif tags for {dng_path}")
 

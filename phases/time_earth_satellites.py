@@ -6,16 +6,12 @@ from datetime import datetime
 def satellite_locator(SubSecDateTimeOriginal, lat, lon):
     #Time Setup
     ts = load.timescale()
+    bluffton = wgs84.latlon(lat, lon)
     time_string = SubSecDateTimeOriginal
     iso_string = time_string.replace(":", "-", 2)
     dt = datetime.fromisoformat(iso_string)
     t = ts.from_datetime(dt)
     print("Current UTC:", t.utc_datetime())
-
-    #Location
-    melbourne = wgs84.latlon(lat, lon, elevation_m=28)
-    tz = pytz.timezone('Australia/Melbourne')
-    print("Observer Location:", melbourne)
 
     name = 'historical_active.json' 
 
@@ -29,9 +25,17 @@ def satellite_locator(SubSecDateTimeOriginal, lat, lon):
     for sat in sats:
         satellites_dict[sat.model.satnum] = sat
     sats = list(satellites_dict.values())
+
+    for sat in sats[:]:
+        difference = sat - bluffton
+        topocentric = difference.at(t)
+        alt, az, distance = topocentric.altaz()
+        
+        if alt.degrees < 0:
+            sats.remove(sat)
+
     print('Loaded', len(sats), 'historical satellites')
 
-    me = melbourne.at(t)
     return satellites_dict
 
  

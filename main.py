@@ -147,7 +147,7 @@ if __name__ == "__main__":
     else:
         print(f"Error: Embedded preview data missing from Exif tags for {dng_path}")
 
-
+    
     header = get_camera_pointing(png_image)
 
     # Check if the DNG data exists in your master dictionary

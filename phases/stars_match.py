@@ -49,6 +49,10 @@ def get_camera_pointing(image):
         x = list(x_positions)
         y = list(y_positions)
 
+
+        """ 
+        not using astroquery anymore, since it doesnt give out the result even after results of waiting, so will try out star matching myself
+
         submission_id = None
         max_network_retries = 3
         retry_delay = 10
@@ -103,3 +107,4 @@ def get_camera_pointing(image):
                     
         print("Failed to retrieve camera pointing data.")
         return None
+        """

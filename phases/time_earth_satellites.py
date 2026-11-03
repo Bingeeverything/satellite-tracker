@@ -20,22 +20,38 @@ def satellite_locator(SubSecDateTimeOriginal, lat, lon):
         data = json.load(f)
 
     # Create EarthSatellite objects
-    sats = [EarthSatellite.from_omm(ts, fields) for fields in data]
+    sats = [EarthSatellite.from_omm(t, fields) for fields in data]
     satellites_dict = {}
     for sat in sats:
         satellites_dict[sat.model.satnum] = sat
     sats = list(satellites_dict.values())
+    visible_satellites = {}
 
     for sat in sats[:]:
         difference = sat - bluffton
         topocentric = difference.at(t)
         alt, az, distance = topocentric.altaz()
-        
-        if alt.degrees < 0:
-            sats.remove(sat)
+            
+        if alt.degrees >= 0:
+            #Create the data payload
+            tracking_data = {
+                "satellite_object": sat,
+                "alt": alt,
+                "az": az,
+                "distance": distance
+            }
+            
+            #Assign it to BOTH keys independently
+            visible_satellites[sat.name] = tracking_data          #Key 1: The Name string
+            visible_satellites[sat.model.satnum] = tracking_data  #Key 2: the model
 
+    # To use it later:
+    #for sat, coords in visible_satellites.items():
+    #   print(f"{sat.name}: Alt={coords['alt'].degrees}, Az={coords['az'].degrees}")
+
+    sats = list(visible_satellites.values())
     print('Loaded', len(sats), 'historical satellites')
+    print(visible_satellites)
+    return visible_satellites
 
-    return satellites_dict
-
- 
+    

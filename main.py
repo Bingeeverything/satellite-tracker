@@ -5,7 +5,7 @@ import tifffile
 from dotenv import load_dotenv
 import os
 import cv2
-from phases import satellite_locator, download_historical_data, get_camera_pointing, convert_dng_to_fits
+from phases import satellite_locator, download_historical_data, get_camera_pointing, convert_dng_to_fits, celestial_to_cartesian
 from datetime import datetime, timedelta
 
 #Load variables from the .env file
@@ -25,7 +25,7 @@ with exiftool.ExifToolHelper(executable=exiftool_path) as et:
             print(f"Dict: {k} = {v}")
 
 with exiftool.ExifToolHelper(executable=exiftool_path) as et:
-    for d in et.get_tags(file_paths, tags=["SubSecDateTimeOriginal", "GPSAltitude", "GPSPosition", "PreviewImageStart", "PreviewImageLength"]):
+    for d in et.get_tags(file_paths, tags=["SubSecDateTimeOriginal", "GPSAltitude", "GPSPosition", "PreviewImageStart", "PreviewImageLength","FOV", "ImageSize"]):
         current_file = d.get("SourceFile")
         
         # Clean the prefixes for this specific file's tags
@@ -48,6 +48,10 @@ epoch_range = f"{date_before}--{date_after}"
 print(epoch_range)
 print(all_image_data)
 print(image_data)
+
+Length, Width = all_image_data.get("ImageSize", "4000 3000").split()
+Length = int(Length)
+Width = int(Width)
 
 if __name__ == "__main__":
 
@@ -148,7 +152,7 @@ if __name__ == "__main__":
         print(f"Error: Embedded preview data missing from Exif tags for {dng_path}")
 
     
-    header = get_camera_pointing(png_image)
+    #header = get_camera_pointing(png_image)
 
     # Check if the DNG data exists in your master dictionary
     if dng_path in all_image_data:
@@ -163,8 +167,51 @@ if __name__ == "__main__":
             lat = float(lat)
             lon = float(lon)
             # Execute your satellite timing function
-            satellite_locator(SubSecDateTimeOriginal, lat, lon)
+            sats_dict = satellite_locator(SubSecDateTimeOriginal, lat, lon)
         else:
             print("Error: Missing required GPSPosition or SubSecDateTimeOriginal tags.")
     else:
         print(f"Error: No metadata found for {dng_path}")
+
+
+    image_points = np.array([
+    [851.0, 2356.0],  # Alpha Centauri A
+    [1085.0, 2271.0], # Hadar
+    [1526.0, 2205.0], # Beta Crucis
+    [1621.0, 2400.0]  # Alpha Crucis
+    ], dtype=np.float32)
+
+    # 2. The 3D Celestial Coordinates (RA, Dec in Decimal Degrees)
+    celestial_coords = [
+        (220.34375, -60.94042), # Alpha Centauri A
+        (211.41500, -60.49597), # Hadar
+        (192.31042, -59.82967), # Beta Crucis
+        (187.01208, -63.24222)  # Alpha Crucis
+    ]
+
+    # 3. Convert to Cartesian using your helper function
+    object_points = np.array(
+        [celestial_to_cartesian(ra, dec) for ra, dec in celestial_coords], 
+        dtype=np.float32
+    )
+
+    # 4. Lens Distortion (Assuming a perfect pinhole camera)
+    dist_coeffs = np.zeros((4, 1), dtype=np.float32)
+
+    #the tangent fx and fy maths
+    #4000 is the width of the image and cy and cy take their center points
+    fov_rad = np.radians(all_image_data.get("FOV", 76.0941493376305))
+    fx = fy = 4000 / (2 * np.tan(fov_rad / 2))
+    cx = Length / 2
+    cy = Width / 2
+
+    K = np.array([
+    [fx, 0, cx],
+    [0, fy, cy],
+    [0, 0, 1]
+    ], dtype=np.float32)
+
+    success, rotation_vector, translation_vector = cv2.solvePnP(object_points, image_points, K, dist_coeffs, flags=cv2.SOLVEPNP_SQPNP)
+    print(success)
+    print(rotation_vector)
+    print(translation_vector)

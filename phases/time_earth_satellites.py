@@ -20,7 +20,7 @@ def satellite_locator(SubSecDateTimeOriginal, lat, lon):
         data = json.load(f)
 
     # Create EarthSatellite objects
-    sats = [EarthSatellite.from_omm(t, fields) for fields in data]
+    sats = [EarthSatellite.from_omm(ts, fields) for fields in data]
     satellites_dict = {}
     for sat in sats:
         satellites_dict[sat.model.satnum] = sat
@@ -51,7 +51,6 @@ def satellite_locator(SubSecDateTimeOriginal, lat, lon):
 
     sats = list(visible_satellites.values())
     print('Loaded', len(sats), 'historical satellites')
-    print(visible_satellites)
     return visible_satellites
 
     

@@ -2,8 +2,11 @@ from skyfield.api import EarthSatellite, load, wgs84
 import json
 import pytz
 from datetime import datetime
+from radian_convert import celestial_to_cartesian
+import numpy as np
+import cv2
 
-def satellite_locator(SubSecDateTimeOriginal, lat, lon):
+def satellite_locator(SubSecDateTimeOriginal, lat, lon, rotation_vector, translation_vector, K, dist_coeffs):
     #Time Setup
     ts = load.timescale()
     bluffton = wgs84.latlon(lat, lon)
@@ -30,17 +33,18 @@ def satellite_locator(SubSecDateTimeOriginal, lat, lon):
     for sat in sats[:]:
         difference = sat - bluffton
         topocentric = difference.at(t)
-        alt, az, distance = topocentric.altaz()
+        ra, dec, distance = topocentric.radec()
+        ra_deg = ra.hours * 15
+        dec_deg = dec.degrees
+
+        points = celestial_to_cartesian(ra_deg, dec_deg)
+        packaged = np.array([[[X, Y, Z]]], dtype=np.float32)
+
+        projected, _ = cv2.projectPoints(packaged, rotation_vector, translation_vector, K, dist_coeffs)
+        X, Y = projected[0, 0]
+
             
-        if alt.degrees >= 0:
-            #Create the data payload
-            tracking_data = {
-                "satellite_object": sat,
-                "alt": alt,
-                "az": az,
-                "distance": distance
-            }
-            
+        if 0 <= X <= 4000 and 0 <= Y <= 3000:
             #Assign it to BOTH keys independently
             visible_satellites[sat.name] = tracking_data          #Key 1: The Name string
             visible_satellites[sat.model.satnum] = tracking_data  #Key 2: the model

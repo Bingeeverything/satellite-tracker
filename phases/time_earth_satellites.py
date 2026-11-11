@@ -1,19 +1,22 @@
 from skyfield.api import EarthSatellite, load, wgs84
 import json
 import pytz
-from datetime import datetime
-from radian_convert import celestial_to_cartesian
+from datetime import datetime, timedelta
+from .radian_convert import celestial_to_cartesian
 import numpy as np
 import cv2
 
-def satellite_locator(SubSecDateTimeOriginal, lat, lon, rotation_vector, translation_vector, K, dist_coeffs):
+def satellite_locator(SubSecDateTimeOriginal, lat, lon, rotation_vector, translation_vector, K, dist_coeffs, exposure_minutes = 12):
     #Time Setup
     ts = load.timescale()
     bluffton = wgs84.latlon(lat, lon)
     time_string = SubSecDateTimeOriginal
     iso_string = time_string.replace(":", "-", 2)
     dt = datetime.fromisoformat(iso_string)
+    dt_end = dt + timedelta(minutes=exposure_minutes)
     t = ts.from_datetime(dt)
+    t_end = ts.from_datetime(dt_end)
+
     print("Current UTC:", t.utc_datetime())
 
     name = 'historical_active.json' 
@@ -33,21 +36,26 @@ def satellite_locator(SubSecDateTimeOriginal, lat, lon, rotation_vector, transla
     for sat in sats[:]:
         difference = sat - bluffton
         topocentric = difference.at(t)
+        topocentric_end = difference.at(t_end)
         ra, dec, distance = topocentric.radec()
-        ra_deg = ra.hours * 15
-        dec_deg = dec.degrees
+        ra_end, dec_end, distance = topocentric.radec()
+        ra_deg, ra_deg_end = ra.hours * 15, ra_end.hours * 15
+        dec_deg, dec_deg_end = dec.degrees, dec_end.degrees
 
-        points = celestial_to_cartesian(ra_deg, dec_deg)
-        packaged = np.array([[[X, Y, Z]]], dtype=np.float32)
+        X_start, Y_start, Z_start = celestial_to_cartesian(ra_deg, dec_deg)
+        X_end, Y_end, Z_end = celestial_to_cartesian(ra_deg_end, dec_deg_end)
+
+        packaged = np.array([
+        [[X_start, Y_start, Z_start]],  # Row 0: The t (Start) coordinates
+        [[X_end, Y_end, Z_end]]         # Row 1: The t_end (End) coordinates
+    ], dtype=np.float32)
 
         projected, _ = cv2.projectPoints(packaged, rotation_vector, translation_vector, K, dist_coeffs)
         X, Y = projected[0, 0]
 
             
         if 0 <= X <= 4000 and 0 <= Y <= 3000:
-            #Assign it to BOTH keys independently
-            visible_satellites[sat.name] = tracking_data          #Key 1: The Name string
-            visible_satellites[sat.model.satnum] = tracking_data  #Key 2: the model
+            visible_satellites[sat.name] = (X, Y)
 
     # To use it later:
     #for sat, coords in visible_satellites.items():

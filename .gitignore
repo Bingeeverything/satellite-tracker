@@ -7,6 +7,7 @@ phases/*
 !phases/download_history.py
 !phases/stars_match.py
 !phases/radian_convert.py
+!phases/distance_calculate.py
 historical_active.json
 Result Image.jpg
 __pycache__

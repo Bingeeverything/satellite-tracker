@@ -154,26 +154,6 @@ if __name__ == "__main__":
     
     #header = get_camera_pointing(png_image)
 
-    # Check if the DNG data exists in your master dictionary
-    if dng_path in all_image_data:
-        # Safely pull the keys from your existing dictionary structure
-        SubSecDateTimeOriginal = all_image_data[dng_path].get("SubSecDateTimeOriginal")
-        GPSPosition = all_image_data[dng_path].get("GPSPosition")
-
-        # Verify both values were successfully extracted before processing
-        if GPSPosition and SubSecDateTimeOriginal:
-            # ExifTool separates Composite:GPSPosition using a comma and space
-            lat, lon = GPSPosition.split(" ")
-            lat = float(lat)
-            lon = float(lon)
-            # Execute your satellite timing function
-            sats_dict = satellite_locator(SubSecDateTimeOriginal, lat, lon)
-        else:
-            print("Error: Missing required GPSPosition or SubSecDateTimeOriginal tags.")
-    else:
-        print(f"Error: No metadata found for {dng_path}")
-
-
     image_points = np.array([
     [851.0, 2356.0],  # Alpha Centauri A
     [1085.0, 2271.0], # Hadar
@@ -212,6 +192,34 @@ if __name__ == "__main__":
     ], dtype=np.float32)
 
     success, rotation_vector, translation_vector = cv2.solvePnP(object_points, image_points, K, dist_coeffs, flags=cv2.SOLVEPNP_SQPNP)
-    print(success)
-    print(rotation_vector)
-    print(translation_vector)
+
+    R_matrix, _ = cv2.Rodrigues(rotation_vector)
+    projecte, _ = cv2.projectPoints(object_points[0], rotation_vector, translation_vector, K, dist_coeffs)
+
+        # Check if the DNG data exists in your master dictionary
+    if dng_path in all_image_data:
+        # Safely pull the keys from your existing dictionary structure
+        SubSecDateTimeOriginal = all_image_data[dng_path].get("SubSecDateTimeOriginal")
+        GPSPosition = all_image_data[dng_path].get("GPSPosition")
+
+        # Verify both values were successfully extracted before processing
+        if GPSPosition and SubSecDateTimeOriginal:
+            # ExifTool separates Composite:GPSPosition using a comma and space
+            lat, lon = GPSPosition.split(" ")
+            lat = float(lat)
+            lon = float(lon)
+            # Execute your satellite timing function
+            visible_satellites = satellite_locator(SubSecDateTimeOriginal, 
+                                                               lat, 
+                                                               lon, 
+                                                               rotation_vector=rotation_vector,
+                                                               translation_vector=translation_vector,
+                                                               K=K,
+                                                               dist_coeffs=dist_coeffs
+)       
+
+        print(visible_satellites)
+        else:
+            print("Error: Missing required GPSPosition or SubSecDateTimeOriginal tags.")
+    else:
+        print(f"Error: No metadata found for {dng_path}")

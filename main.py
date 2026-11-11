@@ -5,7 +5,7 @@ import tifffile
 from dotenv import load_dotenv
 import os
 import cv2
-from phases import satellite_locator, download_historical_data, get_camera_pointing, convert_dng_to_fits, celestial_to_cartesian
+from phases import satellite_locator, download_historical_data, get_camera_pointing, convert_dng_to_fits, celestial_to_cartesian, point_to_line_distance
 from datetime import datetime, timedelta
 
 #Load variables from the .env file
@@ -196,6 +196,8 @@ if __name__ == "__main__":
     R_matrix, _ = cv2.Rodrigues(rotation_vector)
     projecte, _ = cv2.projectPoints(object_points[0], rotation_vector, translation_vector, K, dist_coeffs)
 
+    exposure_minutes = 12    
+
         # Check if the DNG data exists in your master dictionary
     if dng_path in all_image_data:
         # Safely pull the keys from your existing dictionary structure
@@ -215,11 +217,14 @@ if __name__ == "__main__":
                                                                rotation_vector=rotation_vector,
                                                                translation_vector=translation_vector,
                                                                K=K,
-                                                               dist_coeffs=dist_coeffs
-)       
+                                                               dist_coeffs=dist_coeffs,
+                                                               exposure_minutes
+)      
 
-        print(visible_satellites)
         else:
             print("Error: Missing required GPSPosition or SubSecDateTimeOriginal tags.")
     else:
         print(f"Error: No metadata found for {dng_path}")
+
+
+    

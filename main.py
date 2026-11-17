@@ -218,8 +218,7 @@ if __name__ == "__main__":
                                                                translation_vector=translation_vector,
                                                                K=K,
                                                                dist_coeffs=dist_coeffs,
-                                                               exposure_minutes
-)      
+                                                               exposure_minutes=exposure_minutes)
 
         else:
             print("Error: Missing required GPSPosition or SubSecDateTimeOriginal tags.")
@@ -227,4 +226,9 @@ if __name__ == "__main__":
         print(f"Error: No metadata found for {dng_path}")
 
 
-    
+    for coord in coordinates:
+        (x0_start, y0_start), (x0_end, y0_end) = satellit
+        for satellit in visible_satellites.items():
+            (x1, y1), (y1, y2) = satellit
+            first_points = point_to_line_distance(x0_start, y0_start, x1, y1, x2, y2)
+            second_points = point_to_line_distance(x0_end, y0_end, x1, y1, x2, y2)

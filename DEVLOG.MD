@@ -10,3 +10,7 @@ and then calculated them in degrees and     K = np.array([
 
 - Wednesday November 11
 {Finally getting the output streak from projecting the x y z, i also cleared that for an import inside the package i need to do .(filename) also i added some more arguments that i had to pass to satellite locator for it do project the poiints}
+
+
+- Thursday November 19
+{Foxed the point to point line thing in main.py but still have the duplicate streaks to fix out, but finally got the list of streaks from 3000 sats}

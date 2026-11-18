@@ -226,9 +226,16 @@ if __name__ == "__main__":
         print(f"Error: No metadata found for {dng_path}")
 
 
+    final_list = {}
+
     for coord in coordinates:
-        (x0_start, y0_start), (x0_end, y0_end) = satellit
+        (x0_start, y0_start), (x0_end, y0_end) = coord
         for satellit in visible_satellites.items():
-            (x1, y1), (y1, y2) = satellit
-            first_points = point_to_line_distance(x0_start, y0_start, x1, y1, x2, y2)
-            second_points = point_to_line_distance(x0_end, y0_end, x1, y1, x2, y2)
+            (sat_name, [X_start, Y_start, X_end, Y_end]) = satellit
+            first_points = point_to_line_distance(x0_start, y0_start, X_start, Y_start, X_end, Y_end)
+            second_points = point_to_line_distance(x0_end, y0_end, X_start, Y_start, X_end, Y_end)
+
+            if first_points < 10 and second_points < 10:
+                final_list[sat_name] = coord
+
+    print(final_list)

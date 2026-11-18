@@ -38,7 +38,7 @@ def satellite_locator(SubSecDateTimeOriginal, lat, lon, rotation_vector, transla
         topocentric = difference.at(t)
         topocentric_end = difference.at(t_end)
         ra, dec, distance = topocentric.radec()
-        ra_end, dec_end, distance = topocentric.radec()
+        ra_end, dec_end, distance = topocentric_end.radec()
         ra_deg, ra_deg_end = ra.hours * 15, ra_end.hours * 15
         dec_deg, dec_deg_end = dec.degrees, dec_end.degrees
 
@@ -51,11 +51,16 @@ def satellite_locator(SubSecDateTimeOriginal, lat, lon, rotation_vector, transla
     ], dtype=np.float32)
 
         projected, _ = cv2.projectPoints(packaged, rotation_vector, translation_vector, K, dist_coeffs)
-        X, Y = projected[0, 0]
+        X_start, Y_start = projected[0, 0]  # The start pixels
+        X_end, Y_end = projected[1, 0] #end pixels
 
             
-        if 0 <= X <= 4000 and 0 <= Y <= 3000:
-            visible_satellites[sat.name] = (X, Y)
+        if (
+        (0 <= X_start <= 4000 and 0 <= Y_start <= 3000)
+        or (0 <= X_end <= 4000 and 0 <= Y_end <= 3000)
+        ):
+
+            visible_satellites[sat.name] = [X_start ,Y_start, X_end, Y_end]
 
     # To use it later:
     #for sat, coords in visible_satellites.items():

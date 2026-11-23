@@ -230,12 +230,32 @@ if __name__ == "__main__":
 
     for coord in coordinates:
         (x0_start, y0_start), (x0_end, y0_end) = coord
+        best_sat = None
+        lowest_error = 10.0
+        M = 10
         for satellit in visible_satellites.items():
             (sat_name, [X_start, Y_start, X_end, Y_end]) = satellit
-            first_points = point_to_line_distance(x0_start, y0_start, X_start, Y_start, X_end, Y_end)
-            second_points = point_to_line_distance(x0_end, y0_end, X_start, Y_start, X_end, Y_end)
+            X_min = min(X_start, X_end)
+            X_max = max(X_start, X_end)
+            Y_min = min(Y_start, Y_end)
+            Y_max = max(Y_start, Y_end)
 
-            if first_points < 10 and second_points < 10:
-                final_list[sat_name] = coord
+            if all([
+                X_min - M <= x0_start <= X_max + M,
+                Y_min - M <= y0_start <= Y_max + M,
+                X_min - M <= x0_end <= X_max + M,
+                Y_min - M <= y0_end <= Y_max + M,
+                ]):
+
+                first_points = point_to_line_distance(x0_start, y0_start, X_start, Y_start, X_end, Y_end)
+                second_points = point_to_line_distance(x0_end, y0_end, X_start, Y_start, X_end, Y_end)
+
+                error_score = (first_points + second_points) / 2
+                if error_score < lowest_error:
+                    lowest_error = error_score
+                    best_sat = sat_name
+
+        if best_sat is not None:        
+            final_list[best_sat] =  coord
 
     print(final_list)

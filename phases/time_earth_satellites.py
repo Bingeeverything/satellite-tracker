@@ -37,6 +37,7 @@ def satellite_locator(SubSecDateTimeOriginal, lat, lon, rotation_vector, transla
         difference = sat - bluffton
         topocentric = difference.at(t)
         topocentric_end = difference.at(t_end)
+        alt, az, _ = topocentric.altaz()
         ra, dec, distance = topocentric.radec()
         ra_end, dec_end, distance = topocentric_end.radec()
         ra_deg, ra_deg_end = ra.hours * 15, ra_end.hours * 15
@@ -57,10 +58,9 @@ def satellite_locator(SubSecDateTimeOriginal, lat, lon, rotation_vector, transla
             
         if (
         (0 <= X_start <= 4000 and 0 <= Y_start <= 3000)
-        or (0 <= X_end <= 4000 and 0 <= Y_end <= 3000)
-        ):
-
-            visible_satellites[sat.name] = [X_start ,Y_start, X_end, Y_end]
+        or (0 <= X_end <= 4000 and 0 <= Y_end <= 3000) ):
+            if alt.degrees >= 0:
+                visible_satellites[sat.name] = [X_start ,Y_start, X_end, Y_end]
 
     # To use it later:
     #for sat, coords in visible_satellites.items():

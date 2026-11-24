@@ -1,16 +1,13 @@
-from astroquery.astrometry_net import AstrometryNet
-from astroquery.exceptions import TimeoutError as AstroTimeoutError
-from dotenv import load_dotenv
-from astropy.io import fits
+import os
+
 import numpy as np
+import tifffile
+from astropy.io import fits
 from astropy.stats import sigma_clipped_stats
 from astroquery.astrometry_net import AstrometryNet
+from dotenv import load_dotenv
 from photutils.detection import DAOStarFinder
-import os
-import tifffile
-from PIL import ImageChops
-import requests
-import time
+
 
 def convert_dng_to_fits(dng_path, output_fits_path):
     image_data = tifffile.imread(dng_path)

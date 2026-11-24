@@ -1,12 +1,19 @@
-import numpy as np
-import pandas as pd
+import os
+from datetime import datetime, timedelta
+
+import cv2
 import exiftool
+import numpy as np
 import tifffile
 from dotenv import load_dotenv
-import os
-import cv2
-from phases import satellite_locator, download_historical_data, get_camera_pointing, convert_dng_to_fits, celestial_to_cartesian, point_to_line_distance
-from datetime import datetime, timedelta
+
+from phases import (
+    celestial_to_cartesian,
+    convert_dng_to_fits,
+    download_historical_data,
+    point_to_line_distance,
+    satellite_locator,
+)
 
 #Load variables from the .env file
 load_dotenv()
@@ -231,7 +238,7 @@ if __name__ == "__main__":
     for coord in coordinates:
         (x0_start, y0_start), (x0_end, y0_end) = coord
         best_sat = None
-        lowest_error = 10.0
+        lowest_error = 20.0
         M = 10
         for satellit in visible_satellites.items():
             (sat_name, [X_start, Y_start, X_end, Y_end]) = satellit
@@ -255,7 +262,9 @@ if __name__ == "__main__":
                     lowest_error = error_score
                     best_sat = sat_name
 
-        if best_sat is not None:        
+        if best_sat is not None:
             final_list[best_sat] =  coord
-
-    print(final_list)
+    print(final_list.items())
+    for best_sata, coorda in final_list.items():
+        print(f"Streak Detected from Pixel {coorda[0]} to {coorda[1]} matches the trajectory of satellite {best_sata}")
+    

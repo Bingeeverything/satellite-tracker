@@ -14,3 +14,17 @@ and then calculated them in degrees and     K = np.array([
 
 - Thursday November 19
 {Foxed the point to point line thing in main.py but still have the duplicate streaks to fix out, but finally got the list of streaks from 3000 sats}
+
+-Monday November 22
+{feat(correlator): add bounding-box filter for finite trajectory matching
+
+- Constrain streak endpoint correlation to the satellite's finite segment bounds (+/- 10px margin)
+- Prevent infinite-line false positives across unrelated regions of the frame
+- Rank valid candidates by lowest mean perpendicular distance for 1-to-1 matching
+- added back topocentric .altaz
+- will try inccreasing my lowest error to check what goes on since rn i got 0 satellites, maybe because of my exposure time but ill try}
+
+- Tuesday November 24
+{not sure why the output is like this Streak Detected from Pixel L to A matches the trajectory of satellite ((np.int32(1091), np.int32(732)), (np.int32(1095), np.int32(463)))
+where does the L and A come from
+}

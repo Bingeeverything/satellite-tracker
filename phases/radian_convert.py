@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def celestial_to_cartesian(ra_deg, dec_deg):
     """
     Im taking the r to the stars as infinity so 1, since they are very far away and my sensor just knows thatt they are far far away, and my camera is a pinhole camera  so im just getting the coords and nothing else

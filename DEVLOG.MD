@@ -25,6 +25,6 @@ and then calculated them in degrees and     K = np.array([
 - will try inccreasing my lowest error to check what goes on since rn i got 0 satellites, maybe because of my exposure time but ill try}
 
 - Tuesday November 24
-{not sure why the output is like this Streak Detected from Pixel L to A matches the trajectory of satellite ((np.int32(1091), np.int32(732)), (np.int32(1095), np.int32(463)))
+{added a human readable f print and not sure why the output is like this - Streak Detected from Pixel L to A matches the trajectory of satellite ((np.int32(1091), np.int32(732)), (np.int32(1095), np.int32(463)))
 where does the L and A come from
-}
+oh right  i swapped the variables assigning the final list and now it works}

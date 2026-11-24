@@ -236,7 +236,7 @@ if __name__ == "__main__":
     final_list = {}
 
     for coord in coordinates:
-        (x0_start, y0_start), (x0_end, y0_end) = coord
+        (x0_start, y0_start), (x0_end, y0_end) = (tuple(map(int, pt)) for pt in coord)
         best_sat = None
         lowest_error = 20.0
         M = 10
@@ -263,8 +263,12 @@ if __name__ == "__main__":
                     best_sat = sat_name
 
         if best_sat is not None:
-            final_list[best_sat] =  coord
+            final_list[best_sat] =  ((x0_start, y0_start), (x0_end, y0_end))
     print(final_list.items())
+    final_image = cv2.cvtColor(scaled_image, cv2.COLOR_GRAY2BGR)
+
     for best_sata, coorda in final_list.items():
+        cv2.line(final_image, coorda[0], coorda[1], (0, 255, 0), 3)
+
         print(f"Streak Detected from Pixel {coorda[0]} to {coorda[1]} matches the trajectory of satellite {best_sata}")
-    
+    cv2.imwrite("verified_overlay.jpg", final_image)
